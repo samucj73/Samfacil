@@ -15,7 +15,7 @@ abas = st.tabs(["🏠 Início", "📈 Estatísticas", "📊 Conferência", "🎯
 with abas[3]:
     st.header("🎯 Gerador de Cartões Otimizados")
 
-    concursos = obter_ultimos_resultados()
+    concursos = capturar_ultimos_resultados()
     freq_dict = calcular_frequencia(concursos)
     dezenas_ordenadas = sorted(freq_dict.items(), key=lambda x: x[1], reverse=True)
     dezenas_mais_freq = [d[0] for d in dezenas_ordenadas[:15]]
