@@ -51,3 +51,8 @@ else:
                     st.write(f"{i:02d}) `{sorted(c)}`")
             else:
                 st.info("Nenhum cartão teve bom desempenho com esse critério.")
+                # 🔽 Exibição dos concursos detalhados
+    with st.expander("📅 Ver os 25 últimos concursos detalhados"):
+        for numero, data, dezenas in concursos:
+            dezenas_str = ", ".join(str(d).zfill(2) for d in dezenas)
+            st.write(f"Concurso {numero} ({data}): {dezenas_str}")
