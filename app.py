@@ -1,6 +1,7 @@
 import streamlit as st
 from datetime import datetime
-from api_lotofacil import capturar_ultimos_resultados, gerar_cartoes_otimizados
+from api_lotofacil import capturar_ultimos_resultados
+from gerador_otimizado  import 
 
 st.set_page_config(page_title="LotoFácil Inteligente", layout="centered")
 
