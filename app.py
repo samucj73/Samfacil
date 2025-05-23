@@ -2,14 +2,14 @@ import streamlit as st
 from datetime import datetime
 from api_lotofacil import capturar_ultimos_resultados
 from gerador_otimizado  import gerar_cartoes_otimizados
-
+import fpdf
 st.set_page_config(page_title="LotoFácil Inteligente", layout="centered")
 
 st.title("🔮 LotoFácil Inteligente - Geração Otimizada")
 
 # Capturar concursos
 with st.spinner("🔄 Buscando últimos resultados da Lotofácil..."):
-    concursos = capturar_ultimos_resultados(qtd=25)
+    concursos = capturar_ultimos_resultados(qtd=250)
 
 if not concursos:
     st.error("❌ Não foi possível obter os resultados da Lotofácil.")
