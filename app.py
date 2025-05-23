@@ -1,33 +1,32 @@
-
 import streamlit as st
-from gerador_otimizado import gerar_cartoes_otimizados
-from exportar import exportar_pdf, exportar_txt
-from api_lotofacil import capturar_ultimos_resultados
-# from estatisticas import calcular_frequencia
+from datetime import datetime
+from modulo_lotofacil import capturar_ultimos_resultados, gerar_cartoes_otimizados
 
-st.set_page_config(page_title="Lotofácil Inteligente", layout="wide")
+st.set_page_config(page_title="LotoFácil Inteligente", layout="centered")
 
-st.title("💡 Lotofácil Inteligente")
+st.title("🔮 LotoFácil Inteligente - Geração Otimizada")
 
-abas = st.tabs(["🏠 Início", "📈 Estatísticas", "📊 Conferência", "🎯 Cartões Otimizados"])
+# Capturar concursos
+with st.spinner("🔄 Buscando últimos resultados da Lotofácil..."):
+    concursos = capturar_ultimos_resultados(qtd=25)
 
-# Aba de Cartões Otimizados
-with abas[3]:
-    st.header("🎯 Gerador de Cartões Otimizados")
+if not concursos:
+    st.error("❌ Não foi possível obter os resultados da Lotofácil.")
+else:
+    ultimo_concurso = concursos[0]
+    numero, data, dezenas = ultimo_concurso
 
-    concursos = capturar_ultimos_resultados()
-    freq_dict = calcular_frequencia(concursos)
-    dezenas_ordenadas = sorted(freq_dict.items(), key=lambda x: x[1], reverse=True)
-    dezenas_mais_freq = [d[0] for d in dezenas_ordenadas[:15]]
-    dezenas_menos_freq = [d[0] for d in dezenas_ordenadas[-5:]]
+    st.subheader(f"📅 Último concurso: {numero} ({data})")
+    st.markdown(f"**Dezenas sorteadas:** `{sorted(dezenas)}`")
 
-    qtd_cartoes = st.number_input("Quantidade de cartões otimizados a gerar", min_value=1, max_value=100, value=10, step=1)
+    st.divider()
 
-    if st.button("Gerar Cartões Otimizados"):
-        cartoes_otimizados = gerar_cartoes_otimizados(qtd_cartoes, dezenas_mais_freq, dezenas_menos_freq)
-        for i, c in enumerate(cartoes_otimizados, 1):
-            st.write(f"Cartão {i}: {c}")
+    qtde_cartoes = st.slider("📌 Quantidade de cartões a gerar:", min_value=1, max_value=30, value=10)
+    if st.button("🚀 Gerar Cartões Otimizados"):
+        with st.spinner("🔍 Gerando cartões com filtros avançados..."):
+            cartoes = gerar_cartoes_otimizados(dezenas, qtde_cartoes)
 
-        nome_arquivo = "cartoes_otimizados"
-        st.download_button("📄 Exportar PDF", data=exportar_pdf(cartoes_otimizados), file_name=f"{nome_arquivo}.pdf")
-        st.download_button("📄 Exportar TXT", data=exportar_txt(cartoes_otimizados), file_name=f"{nome_arquivo}.txt")
+        st.success(f"✅ {len(cartoes)} cartões gerados com sucesso!")
+
+        for i, cartao in enumerate(cartoes, 1):
+            st.write(f"Cartão {i}: `{cartao}`")
