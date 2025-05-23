@@ -2,7 +2,7 @@
 import streamlit as st
 from gerador_otimizado import gerar_cartoes_otimizados
 from exportar import exportar_pdf, exportar_txt
-from api_lotofacil import obter_ultimos_concursos
+from api_lotofacil import capturar_ultimos_resultados
 from estatisticas import calcular_frequencia
 
 st.set_page_config(page_title="Lotofácil Inteligente", layout="wide")
