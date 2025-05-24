@@ -62,7 +62,7 @@ def gerar_cartao_estrategico(mais_freq, menos_freq, tentativas=1000):
         if (
             soma_ok(cartao) and
             pares_impares_ok(cartao) and
-            not tem_sequencia(cartao, tamanho=3)
+            tem_sequencia(cartao, tamanho=3)
             # quadrantes_ok(cartao) and
             # primos_ok(cartao)
         ):
