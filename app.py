@@ -15,7 +15,7 @@ if st.button("🔁 Atualizar concursos"):
 
 if "concursos_25" not in st.session_state:
     with st.spinner("🔄 Buscando últimos 25 resultados da Lotofácil..."):
-        concursos = capturar_ultimos_resultados(qtd=15)
+        concursos = capturar_ultimos_resultados(qtd=150)
         if not concursos:
             st.error("❌ Não foi possível obter os resultados.")
             st.stop()
@@ -34,7 +34,7 @@ if 'dezenas' not in st.session_state:
     st.session_state.dezenas = sorted(dezenas)
 
 # 🎰 Geração de cartões otimizados
-qtde_cartoes = st.slider("📌 Quantidade de cartões a gerar:", 1, 30, 10)
+qtde_cartoes = st.slider("📌 Quantidade de cartões a gerar:", 1, 1000, 100)
 
 if st.button("🚀 Gerar Cartões Otimizados"):
     with st.spinner("🔍 Gerando cartões com filtros avançados..."):
