@@ -15,11 +15,13 @@ def conferir_cartoes(cartoes, ultimos_resultados, filtrar_excelentes=True, min_a
     - contagem de acertos por faixa (Counter)
     - desempenho dos cartões (dict): {cartao: contagem_12+}
     - bons_cartoes: lista de cartões com bom desempenho
+    - destaques: dict com cartões que fizeram 13, 14 ou 15 pontos (por concurso)
     """
     resultados = []
     faixa_acertos = Counter()
     desempenho = defaultdict(int)
     bons_cartoes = []
+    destaques = defaultdict(list)  # {acertos: [(cartao, concurso)]}
 
     for concurso, data, dezenas_sorteadas in ultimos_resultados:
         acertos_por_cartao = []
@@ -31,12 +33,14 @@ def conferir_cartoes(cartoes, ultimos_resultados, filtrar_excelentes=True, min_a
                 faixa_acertos[acertos] += 1
             if acertos >= 12:
                 desempenho[tuple(cartao)] += 1
+            if acertos in (13, 14, 15):
+                destaques[acertos].append((list(cartao), concurso))
         resultados.append((concurso, acertos_por_cartao))
 
     if filtrar_excelentes:
         bons_cartoes = [list(c) for c, v in desempenho.items() if v >= min_acertos]
 
-    return resultados, faixa_acertos, desempenho, bons_cartoes
+    return resultados, faixa_acertos, desempenho, bons_cartoes, destaques
 
 
 # -------------------------
@@ -45,7 +49,7 @@ def conferir_cartoes(cartoes, ultimos_resultados, filtrar_excelentes=True, min_a
 if __name__ == "__main__":
     from meus_dados import cartoes, ultimos_resultados  # <- ajuste para seu projeto
 
-    resultados, faixa_acertos, desempenho, bons_cartoes = conferir_cartoes(
+    resultados, faixa_acertos, desempenho, bons_cartoes, destaques = conferir_cartoes(
         cartoes,
         ultimos_resultados,
         filtrar_excelentes=True,
@@ -62,3 +66,12 @@ if __name__ == "__main__":
             print(f"{i:02d}) {cartao}")
     else:
         print("Nenhum cartão atingiu o critério.")
+
+    print("\n🎯 Cartões que fizeram 13, 14 ou 15 pontos:")
+    for pontos in [13, 14, 15]:
+        if destaques[pontos]:
+            print(f"\n▶ Cartões com {pontos} pontos:")
+            for cartao, concurso in destaques[pontos]:
+                print(f"Concurso {concurso}: {cartao}")
+        else:
+            print(f"\n▶ Nenhum cartão fez {pontos} pontos.")
