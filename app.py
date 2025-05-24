@@ -54,12 +54,13 @@ if "cartoes_gerados" in st.session_state:
 
     if st.button("✅ Conferir Desempenho dos Cartões"):
         with st.spinner("🔎 Analisando desempenho..."):
-            resultados, faixas, desempenho, bons = conferir_cartoes(
-                st.session_state.cartoes_gerados,
-                concursos,
-                filtrar_excelentes=True,
-                min_acertos=min_concursos
-            )
+            resultados, faixa_acertos, desempenho, bons_cartoes, destaques = conferir_cartoes(
+    cartoes,
+    ultimos_resultados,
+    filtrar_excelentes=True,
+    min_acertos=3
+)
+            
 
         st.write("### 🎯 Faixas de Acertos (total em todos concursos):")
         for pontos in range(11, 16):
