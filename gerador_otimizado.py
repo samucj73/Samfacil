@@ -66,7 +66,7 @@ def gerar_cartao_otimizado(anterior):
 def gerar_cartoes_otimizados(anterior, quantidade=10):
     cartoes = []
     while len(cartoes) < quantidade:
-        cartao = gerar_cartao_otimizado(anterior)
+        cartao = gerar_cartoes_otimizados(anterior)
         if cartao and cartao not in cartoes:
             cartoes.append(cartao)
     return cartoes
