@@ -5,9 +5,6 @@ from collections import Counter
 DEZENAS = list(range(1, 26))
 PRIMOS = {2, 3, 5, 7, 11, 13, 17, 19, 23}
 
-def eh_primo(n):
-    return n in PRIMOS
-
 def tem_sequencia(dezenas, tamanho=3):
     dezenas_ordenadas = sorted(dezenas)
     for i in range(len(dezenas_ordenadas) - tamanho + 1):
@@ -58,18 +55,19 @@ def analisar_dezenas_estrategicas(concursos):
 
     return mais_frequentes, menos_frequentes
 
-def gerar_cartao_estrategico(mais_freq, menos_freq):
-    for _ in range(1000):
+def gerar_cartao_estrategico(mais_freq, menos_freq, tentativas=300):
+    for _ in range(tentativas):
         base = list(mais_freq)
         extra_pool = list(set(DEZENAS) - set(base) - menos_freq)
         complemento = random.sample(extra_pool, 15 - len(base))
         cartao = base + complemento
         random.shuffle(cartao)
 
-        if (pares_impares_ok(cartao) and
-            soma_ok(cartao) and
-            primos_ok(cartao) and
+        # Filtros organizados do mais leve para o mais restritivo
+        if (soma_ok(cartao) and
+            pares_impares_ok(cartao) and
             quadrantes_ok(cartao) and
+            primos_ok(cartao) and
             tem_sequencia(cartao, tamanho=3)):
             return sorted(cartao)
     return None
@@ -77,10 +75,13 @@ def gerar_cartao_estrategico(mais_freq, menos_freq):
 def gerar_cartoes_otimizados(concursos_25, quantidade=10):
     mais_frequentes, menos_frequentes = analisar_dezenas_estrategicas(concursos_25)
     cartoes = []
+    set_cartoes = set()
 
     while len(cartoes) < quantidade:
         cartao = gerar_cartao_estrategico(mais_frequentes, menos_frequentes)
-        if cartao and cartao not in cartoes:
+        cartao_tuple = tuple(cartao) if cartao else None
+        if cartao and cartao_tuple not in set_cartoes:
             cartoes.append(cartao)
+            set_cartoes.add(cartao_tuple)
 
     return cartoes
