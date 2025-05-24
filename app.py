@@ -34,7 +34,7 @@ if 'dezenas' not in st.session_state:
     st.session_state.dezenas = sorted(dezenas)
 
 # 🎰 Geração de cartões otimizados
-qtde_cartoes = st.slider("📌 Quantidade de cartões a gerar:", 1, 1000, 100)
+qtde_cartoes = st.slider("📌 Quantidade de cartões a gerar:", 1, 100, 50)
 
 if st.button("🚀 Gerar Cartões Otimizados"):
     with st.spinner("🔍 Gerando cartões com filtros avançados..."):
