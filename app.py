@@ -55,21 +55,20 @@ if "cartoes_gerados" in st.session_state:
     if st.button("✅ Conferir Desempenho dos Cartões"):
         with st.spinner("🔎 Analisando desempenho..."):
             resultados, faixa_acertos, desempenho, bons_cartoes, destaques = conferir_cartoes(
-    cartoes,
-    ultimos_resultados,
-    filtrar_excelentes=True,
-    min_acertos=3
-)
-            
+                st.session_state.cartoes_gerados,
+                concursos,
+                filtrar_excelentes=True,
+                min_acertos=min_concursos
+            )
 
         st.write("### 🎯 Faixas de Acertos (total em todos concursos):")
         for pontos in range(11, 16):
-            st.write(f"✅ {pontos} pontos: `{faixas.get(pontos, 0)}`")
+            st.write(f"✅ {pontos} pontos: `{faixa_acertos.get(pontos, 0)}`")
 
         st.write("---")
         st.write(f"🏅 Cartões que acertaram **12+ pontos em pelo menos {min_concursos} concursos**:")
-        if bons:
-            for i, c in enumerate(bons, 1):
+        if bons_cartoes:
+            for i, c in enumerate(bons_cartoes, 1):
                 st.write(f"{i:02d}) `{sorted(c)}`")
         else:
             st.info("Nenhum cartão teve bom desempenho com esse critério.")
