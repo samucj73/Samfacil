@@ -5,6 +5,7 @@ from collections import Counter
 DEZENAS = list(range(1, 26))
 PRIMOS = {2, 3, 5, 7, 11, 13, 17, 19, 23}
 
+# Evita sequência de 3 ou mais dezenas consecutivas
 def tem_sequencia(dezenas, tamanho=3):
     dezenas_ordenadas = sorted(dezenas)
     for i in range(len(dezenas_ordenadas) - tamanho + 1):
@@ -38,7 +39,7 @@ def quadrantes_ok(dezenas):
             contagem[3] += 1
     return all(3 <= c <= 4 for c in contagem)
 
-# 🧠 Frequência das dezenas nos últimos 300 concursos
+# Frequência das dezenas nos concursos
 def calcular_frequencia(concursos):
     todas = [d for _, _, dz in concursos for d in dz]
     contagem = Counter(todas)
@@ -47,41 +48,53 @@ def calcular_frequencia(concursos):
 def analisar_dezenas_estrategicas(concursos):
     freq = calcular_frequencia(concursos)
 
-    # Mais frequentes
     mais_frequentes = {d for d, _ in freq.most_common(12)}
-
-    # Menos frequentes
     menos_frequentes = {d for d, _ in freq.most_common()[-8:]}
 
     return mais_frequentes, menos_frequentes
 
 def gerar_cartao_estrategico(mais_freq, menos_freq, tentativas=300):
     for _ in range(tentativas):
-        base = list(mais_freq)
+        base = random.sample(mais_freq, 10)
         extra_pool = list(set(DEZENAS) - set(base) - menos_freq)
-        complemento = random.sample(extra_pool, 15 - len(base))
+        if len(extra_pool) < 5:
+            continue
+        complemento = random.sample(extra_pool, 5)
         cartao = base + complemento
         random.shuffle(cartao)
 
-        # Filtros organizados do mais leve para o mais restritivo
-        if (soma_ok(cartao) and
+        # Aplicar filtros
+        if (
+            soma_ok(cartao) and
             pares_impares_ok(cartao) and
             quadrantes_ok(cartao) and
             primos_ok(cartao) and
-            tem_sequencia(cartao, tamanho=3)):
+            not tem_sequencia(cartao, tamanho=3)
+        ):
             return sorted(cartao)
+        
+        # Para depuração (opcional)
+        # print(f"Rejeitado: {sorted(cartao)}")
+
     return None
 
 def gerar_cartoes_otimizados(concursos_25, quantidade=10):
     mais_frequentes, menos_frequentes = analisar_dezenas_estrategicas(concursos_25)
     cartoes = []
     set_cartoes = set()
+    falhas = 0
+    max_falhas = 1000
 
-    while len(cartoes) < quantidade:
+    while len(cartoes) < quantidade and falhas < max_falhas:
         cartao = gerar_cartao_estrategico(mais_frequentes, menos_frequentes)
-        cartao_tuple = tuple(cartao) if cartao else None
-        if cartao and cartao_tuple not in set_cartoes:
-            cartoes.append(cartao)
-            set_cartoes.add(cartao_tuple)
+        if cartao:
+            cartao_tuple = tuple(cartao)
+            if cartao_tuple not in set_cartoes:
+                cartoes.append(cartao)
+                set_cartoes.add(cartao_tuple)
+            else:
+                falhas += 1  # Cartão duplicado
+        else:
+            falhas += 1  # Nenhum cartão gerado
 
     return cartoes
