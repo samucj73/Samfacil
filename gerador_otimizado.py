@@ -1,4 +1,5 @@
 import random
+from collections import Counter
 
 # Dezenas auxiliares
 DEZENAS = list(range(1, 26))
@@ -48,7 +49,7 @@ def quadrantes_ok(dezenas):
     return all(3 <= c <= 4 for c in contagem)
 
 def gerar_cartao_otimizado(anterior):
-    for _ in range(5000):  # tenta até 5000 vezes encontrar um bom cartão
+    for _ in range(500):  # tenta até 5000 vezes encontrar um bom cartão
         repetidas = random.sample(anterior, random.choice([9, 10]))
         restantes = list(set(DEZENAS) - set(repetidas))
         complemento = random.sample(restantes, 15 - len(repetidas))
@@ -65,7 +66,7 @@ def gerar_cartao_otimizado(anterior):
 
 def gerar_cartoes_otimizados(anterior, quantidade=10):
     cartoes = []
-    while len(cartoes) < quantidade:
+    while len(concursos) < quantidade:
         cartao = gerar_cartao_otimizado(anterior)
         if cartao and cartao not in cartoes:
             cartoes.append(cartao)
