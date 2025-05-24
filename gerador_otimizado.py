@@ -49,7 +49,7 @@ def analisar_dezenas_estrategicas(concursos):
     menos_frequentes = {d for d, _ in freq.most_common()[-8:]}
     return mais_frequentes, menos_frequentes
 
-def gerar_cartao_estrategico(mais_freq, menos_freq, tentativas=1000):
+def gerar_cartao_estrategico(mais_freq, menos_freq, tentativas=50000):
     for _ in range(tentativas):
         base = random.sample(list(mais_freq), 8)
         extra_pool = list(set(DEZENAS) - set(base) - set(menos_freq))
