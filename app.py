@@ -38,7 +38,7 @@ qtde_cartoes = st.slider("📌 Quantidade de cartões a gerar:", 1, 30, 10)
 
 if st.button("🚀 Gerar Cartões Otimizados"):
     with st.spinner("🔍 Gerando cartões com filtros avançados..."):
-        cartoes = gerar_cartoes_otimizados(st.session_state.concursos, qtde_cartoes)
+        cartoes = gerar_cartoes_otimizados(st.session_state.concursos_25, qtde_cartoes)
         st.session_state.cartoes_gerados = cartoes
 
     st.success(f"✅ {len(cartoes)} cartões gerados!")
