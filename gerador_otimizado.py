@@ -74,8 +74,8 @@ def gerar_cartao_estrategico(mais_freq, menos_freq):
             return sorted(cartao)
     return None
 
-def gerar_cartoes_otimizados(concursos_300, quantidade=10):
-    mais_frequentes, menos_frequentes = analisar_dezenas_estrategicas(concursos_300)
+def gerar_cartoes_otimizados(concursos_25, quantidade=10):
+    mais_frequentes, menos_frequentes = analisar_dezenas_estrategicas(concursos_25)
     cartoes = []
 
     while len(cartoes) < quantidade:
