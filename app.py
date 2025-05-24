@@ -16,14 +16,14 @@ def exportar_cartoes_txt(cartoes):
 
 # 🔄 Captura dos concursos
 with st.spinner("🔄 Buscando últimos resultados da Lotofácil..."):
-    concursos = capturar_ultimos_resultados(qtd=25)
+    concursos = capturar_ultimos_resultados(qtd=250)
 
 if not concursos:
     st.error("❌ Não foi possível obter os resultados.")
     st.stop()
 
 # Último concurso (usado para análises e repetições)
-numero, data, dezenas = concursos[0]
+numero, data, dezenas = concursos[]
 if 'dezenas' not in st.session_state:
     st.session_state.dezenas = sorted(dezenas)
 
