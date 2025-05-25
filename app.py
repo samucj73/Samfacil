@@ -66,14 +66,27 @@ if st.button("📊 Gerar com base nos últimos 300 concursos (Aleatório)"):
     st.divider()
 
 # 📊 Conferência de desempenho
-if "cartoes_gerados" in st.session_state:
-    st.subheader("📊 Conferência com últimos 25 concursos")
+    # 📊 Conferência de desempenho
+st.subheader("📊 Conferência com últimos 25 concursos")
+
+tipo_cartao = st.radio("Escolha quais cartões deseja conferir:",
+                       options=["Otimizados (25 concursos)", "Aleatórios (300 concursos)"],
+                       horizontal=True)
+
+if tipo_cartao == "Otimizados (25 concursos)" and "cartoes_gerados" in st.session_state:
+    cartoes_para_conferir = st.session_state.cartoes_gerados
+elif tipo_cartao == "Aleatórios (300 concursos)" and "cartoes_gerados_aleatorios" in st.session_state:
+    cartoes_para_conferir = st.session_state.cartoes_gerados_aleatorios
+else:
+    cartoes_para_conferir = []
+
+if cartoes_para_conferir:
     min_concursos = st.slider("Mínimo de concursos com 13+ pontos para destacar cartão:", 1, 10, 3)
 
     if st.button("✅ Conferir Desempenho dos Cartões"):
         with st.spinner("🔎 Analisando desempenho..."):
             resultados, faixa_acertos, desempenho, bons_cartoes, destaques = conferir_cartoes(
-                st.session_state.cartoes_gerados,
+                cartoes_para_conferir,
                 concursos,
                 filtrar_excelentes=True,
                 min_acertos=min_concursos
@@ -90,6 +103,10 @@ if "cartoes_gerados" in st.session_state:
                 st.write(f"{i:02d}) `{sorted(c)}`")
         else:
             st.info("Nenhum cartão teve bom desempenho com esse critério.")
+else:
+    st.info("Gere os cartões primeiro para poder conferi-los.")
+    
+
 
         # 🎯 Destaque especial: cartões com 14 pontos
         if destaques[14]:
