@@ -3,109 +3,87 @@ from datetime import datetime
 from api_lotofacil import capturar_ultimos_resultados
 from gerador_otimizado import gerar_cartoes_otimizados
 from gerador_probabilistico import gerar_cartoes_mais_possiveis
-
-from conferencia import conferir_cartoes  # <- Módulo de conferência
+from conferencia import conferir_cartoes
 
 st.set_page_config(page_title="LotoFácil Inteligente", layout="centered")
 st.title("🔮 LotoFácil Inteligente")
 
-# 🔄 Captura dos 25 últimos concursos com cache por sessão
-st.subheader("📥 Resultados dos últimos concursos")
-
+# 🔄 Captura dos últimos concursos
 if st.button("🔁 Atualizar concursos"):
     st.session_state.pop("concursos_25", None)
+    st.session_state.pop("concursos_300", None)
 
 if "concursos_25" not in st.session_state:
     with st.spinner("🔄 Buscando últimos 25 resultados da Lotofácil..."):
-        concursos = capturar_ultimos_resultados(qtd=150)
+        concursos = capturar_ultimos_resultados(qtd=25)
         if not concursos:
             st.error("❌ Não foi possível obter os resultados.")
             st.stop()
         st.session_state.concursos_25 = concursos
 
-concursos = st.session_state.concursos_25
+if "concursos_300" not in st.session_state:
+    with st.spinner("🔄 Buscando os 300 últimos concursos..."):
+        concursos_300 = capturar_ultimos_resultados(qtd=300)
+        st.session_state.concursos_300 = concursos_300
 
-# 🟢 Exibir último concurso
+concursos = st.session_state.concursos_25
+concursos_300 = st.session_state.concursos_300
+
+# Exibe último concurso
 numero, data, dezenas = concursos[0]
 st.subheader(f"📅 Último concurso: {numero} ({data})")
 st.markdown(f"**Dezenas sorteadas:** `{sorted(dezenas)}`")
 st.divider()
-
-# 🔧 Inicializa dezenas no session_state
-if 'dezenas' not in st.session_state:
-    st.session_state.dezenas = sorted(dezenas)
 
 # 🎰 Geração de cartões otimizados
 qtde_cartoes = st.slider("📌 Quantidade de cartões a gerar:", 1, 2000, 450)
 
 if st.button("🚀 Gerar Cartões Otimizados"):
     with st.spinner("🔍 Gerando cartões com filtros avançados..."):
-        cartoes = gerar_cartoes_otimizados(st.session_state.concursos_25, qtde_cartoes)
+        cartoes = gerar_cartoes_otimizados(concursos, qtde_cartoes)
         st.session_state.cartoes_gerados = cartoes
 
     st.success(f"✅ {len(cartoes)} cartões gerados!")
     for i, c in enumerate(cartoes, 1):
         st.write(f"Cartão {i}: `{c}`")
-
     st.divider()
 
-# 🎲 Geração de cartões aleatórios com base nos 300 concursos
-st.markdown("### 🎲 Geração com lógica mais aleatória (300 concursos)")
-
-if st.button("📊 Gerar com base nos últimos 300 concursos (Aleatório)"):
+# 🎲 Cartões aleatórios com base nos 300 concursos
+if st.button("🎲 Gerar Aleatórios Base 300"):
     from gerador_otimizado import gerar_cartoes_aleatorios_base_300
 
-    with st.spinner("🎲 Gerando cartões com lógica menos restrita..."):
-        cartoes_aleatorios = gerar_cartoes_aleatorios_base_300(
-            st.session_state.concursos_300, qtde_cartoes
-        )
+    with st.spinner("🎲 Gerando cartões aleatórios..."):
+        cartoes_aleatorios = gerar_cartoes_aleatorios_base_300(concursos_300, qtde_cartoes)
         st.session_state.cartoes_gerados_aleatorios = cartoes_aleatorios
 
-    st.success(f"✅ {len(cartoes_aleatorios)} cartões gerados com lógica aleatória baseada nos 300 concursos!")
+    st.success(f"✅ {len(cartoes_aleatorios)} cartões gerados!")
     for i, c in enumerate(cartoes_aleatorios, 1):
-        st.write(f"[Aleatório 300] Cartão {i}: `{c}`")
-
+        st.write(f"Aleatório {i}: `{c}`")
     st.divider()
-    # ----------------------------------------------
-# 🎯 NOVA SEÇÃO - Geração de Cartões Probabilístico
-# ----------------------------------------------
 
-
-
-st.subheader("🔢 Gerar Cartões Probabilísticos (com base nos 300 concursos)")
-qtde_prob = st.slider("📌 Quantidade de cartões probabilísticos:", 1, 15000, 520, key="slider_probabilistico")
-
-if st.button("🎲 Gerar Cartões Probabilísticos"):
-    if "concursos_300" not in st.session_state:
-        with st.spinner("🔄 Buscando os 300 últimos concursos..."):
-            st.session_state.concursos_300 = capturar_ultimos_resultados(qtd=300)
-
-    concursos_base = st.session_state.concursos_300
-    with st.spinner("🔍 Gerando cartões com base na frequência das dezenas..."):
-        cartoes_prob = gerar_cartoes_mais_possiveis(concursos_base, qtde_prob)
+# 🎯 Cartões Probabilísticos
+qtde_prob = st.slider("📌 Quantidade de cartões probabilísticos:", 1, 100, 20)
+if st.button("📈 Gerar Cartões Probabilísticos"):
+    with st.spinner("🎯 Gerando com base em frequência..."):
+        cartoes_prob = gerar_cartoes_mais_possiveis(concursos_300, quantidade=qtde_prob)
         st.session_state.cartoes_probabilisticos = cartoes_prob
 
     st.success(f"✅ {len(cartoes_prob)} cartões gerados com base em frequência!")
     for i, c in enumerate(cartoes_prob, 1):
         st.write(f"Probabilístico {i:02d}: `{c}`")
-    # 📊 Conferência de desempenho
-# 📊 Conferência de desempenho
-st.subheader("📊 Conferência com últimos 25 concursos")
+    st.divider()
 
+# 📊 Conferência de cartões
+st.subheader("📊 Conferência com últimos 25 concursos")
 tipo_cartao = st.radio("Escolha quais cartões deseja conferir:",
-                       options=[
-                           "Otimizados (25 concursos)",
-                           "Aleatórios (300 concursos)",
-                           "Probabilísticos (300 concursos)"
-                       ],
+                       ["Otimizados", "Aleatórios (300)", "Probabilísticos"],
                        horizontal=True)
 
-# Seleciona os cartões conforme tipo escolhido
-if tipo_cartao == "Otimizados (25 concursos)" and "cartoes_gerados" in st.session_state:
+if tipo_cartao == "Otimizados" and "cartoes_gerados" in st.session_state:
     cartoes_para_conferir = st.session_state.cartoes_gerados
-elif tipo_cartao == "Aleatórios (300 concursos)" and "cartoes_gerados_aleatorios" in st.session_state:
+elif tipo_cartao == "Aleatórios (300)" and "cartoes_gerados_aleatorios" in st.session_state:
     cartoes_para_conferir = st.session_state.cartoes_gerados_aleatorios
-elif tipo_cartao == "Probabilísticos (300 concursos)" and "cartoes_probabilisticos" in st.session_state:
+elif tipo_cartao == "Probabilísticos" and "cartoes_probabilisticos" in st.session_state:
     cartoes_para_conferir = st.session_state.cartoes_probabilisticos
 else:
     cartoes_para_conferir = []
@@ -114,7 +92,7 @@ if cartoes_para_conferir:
     min_concursos = st.slider("Mínimo de concursos com 13+ pontos para destacar cartão:", 1, 10, 3)
 
     if st.button("✅ Conferir Desempenho dos Cartões"):
-        with st.spinner("🔎 Analisando desempenho..."):
+        with st.spinner("🔍 Verificando desempenho..."):
             resultados, faixa_acertos, desempenho, bons_cartoes, destaques = conferir_cartoes(
                 cartoes_para_conferir,
                 concursos,
@@ -122,26 +100,29 @@ if cartoes_para_conferir:
                 min_acertos=min_concursos
             )
 
-        st.write("### 🎯 Faixas de Acertos (total em todos concursos):")
+        st.subheader("📈 Faixas de Acertos")
         for pontos in range(11, 16):
             st.write(f"✅ {pontos} pontos: `{faixa_acertos.get(pontos, 0)}`")
 
-        st.markdown("---")
-        st.write(f"🏅 Cartões que acertaram **12+ pontos em pelo menos {min_concursos} concursos**:")
+        st.subheader(f"🏅 Cartões com pelo menos {min_concursos}x com 13+ pontos:")
         if bons_cartoes:
             for i, c in enumerate(bons_cartoes, 1):
                 st.write(f"{i:02d}) `{sorted(c)}`")
         else:
-            st.info("Nenhum cartão teve bom desempenho com esse critério.")
+            st.info("Nenhum cartão teve desempenho destacado.")
 
+        # NOVA LÓGICA: Detalhamento histórico
         st.markdown("---")
-        st.subheader("🏆 Detalhamento: Cartões com 14 ou 15 pontos")
+        st.subheader("🏆 Detalhamento: Cartões com 14 ou 15 pontos + Histórico anterior")
 
         detalhes = []
+        historico_anterior = {}
+
         for idx, cartao in enumerate(cartoes_para_conferir):
-            for concurso in concursos:
+            for pos, concurso in enumerate(concursos):
                 num, _, dezenas_sorteadas = concurso
                 acertos = len(set(cartao) & set(dezenas_sorteadas))
+
                 if acertos in [14, 15]:
                     detalhes.append({
                         "cartao_idx": idx + 1,
@@ -151,6 +132,14 @@ if cartoes_para_conferir:
                         "sorteadas": sorted(dezenas_sorteadas)
                     })
 
+                    historico = []
+                    for prev in concursos[pos+1:]:
+                        num_ant, _, dezenas_ant = prev
+                        acertos_ant = len(set(cartao) & set(dezenas_ant))
+                        if acertos_ant in [11, 12, 13]:
+                            historico.append((num_ant, acertos_ant, sorted(dezenas_ant)))
+                    historico_anterior[(idx + 1, num)] = historico
+
         if detalhes:
             for item in detalhes:
                 st.markdown(f"""
@@ -158,28 +147,22 @@ if cartoes_para_conferir:
                 - 🪪 Cartão **{item['cartao_idx']}**: `{item['cartao']}`  
                 - 🎱 Sorteio: `{item['sorteadas']}`
                 """)
+                chave = (item['cartao_idx'], item['concurso'])
+                historico = historico_anterior.get(chave, [])
+                if historico:
+                    st.markdown(f"🔄 Histórico anterior com 11 a 13 pontos:")
+                    for num, acertos, dezenas in historico:
+                        st.write(f"• Concurso {num}: {acertos} pontos — `{dezenas}`")
+                else:
+                    st.info("Nenhum desempenho anterior relevante.")
         else:
-            st.info("Nenhum cartão fez 14 ou 15 pontos nos últimos 25 concursos.")
+            st.info("Nenhum cartão fez 14 ou 15 pontos.")
 else:
-    st.info("Gere os cartões primeiro para poder conferi-los.")
+    st.warning("Gere os cartões primeiro para poder conferi-los.")
 
-
-    
-
-
-# 📅 Expansor com os 300 últimos concursos
+# 🔽 Expansor para ver os 300 concursos
 with st.expander("📅 Ver os 300 últimos concursos"):
-    col1, col2 = st.columns([0.8, 0.2])
-    with col2:
-        if st.button("🔁 Atualizar 300"):
-            st.session_state.pop("concursos_300", None)
-
-    if 'concursos_300' not in st.session_state:
-        with st.spinner("🔄 Buscando os 300 últimos concursos..."):
-            st.session_state.concursos_300 = capturar_ultimos_resultados(qtd=300)
-
-    todos = st.session_state.concursos_300
-    for item in todos:
+    for item in concursos_300:
         numero = item[0]
         dezenas = ", ".join(str(d).zfill(2) for d in sorted(item[2]))
         st.write(f"Concurso {numero}: {dezenas}")
