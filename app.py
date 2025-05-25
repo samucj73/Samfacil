@@ -122,19 +122,38 @@ if cartoes_para_conferir:
                 min_acertos=min_concursos
             )
 
-        st.write("### 🎯 Faixas de Acertos (total em todos concursos):")
-        for pontos in range(11, 16):
-            st.write(f"✅ {pontos} pontos: `{faixa_acertos.get(pontos, 0)}`")
+st.write("### 🎯 Faixas de Acertos (total em todos concursos):")
+for pontos in range(11, 16):
+    st.write(f"✅ {pontos} pontos: `{faixa_acertos.get(pontos, 0)}`")
 
-        st.write("---")
-        st.write(f"🏅 Cartões que acertaram **12+ pontos em pelo menos {min_concursos} concursos**:")
-        if bons_cartoes:
-            for i, c in enumerate(bons_cartoes, 1):
-                st.write(f"{i:02d}) `{sorted(c)}`")
-        else:
-            st.info("Nenhum cartão teve bom desempenho com esse critério.")
+st.markdown("---")
+st.write("### 🏆 Detalhamento dos cartões com 14 ou 15 pontos:")
+
+detalhes = []
+
+for idx_cartao, cartao in enumerate(cartoes_para_conferir):
+    for idx_concurso, (_, num_concurso, dezenas_sorteadas) in enumerate(concursos):
+        acertos = len(set(cartao) & set(dezenas_sorteadas))
+        if acertos in [14, 15]:
+            detalhes.append({
+                "cartao_idx": idx_cartao + 1,
+                "cartao": sorted(cartao),
+                "concurso": num_concurso,
+                "acertos": acertos,
+                "sorteadas": sorted(dezenas_sorteadas)
+            })
+
+if detalhes:
+    for item in detalhes:
+        st.markdown(f"""
+        🔢 Cartão **{item['cartao_idx']}** acertou **{item['acertos']} pontos** no **concurso {item['concurso']}**  
+        - 🎫 Cartão: `{item['cartao']}`  
+        - 🎯 Dezenas sorteadas: `{item['sorteadas']}`  
+        """)
 else:
-    st.info("Gere os cartões primeiro para poder conferi-los.")
+    st.info("Nenhum cartão fez 14 ou 15 pontos nos últimos 25 concursos.")
+
+        
     
     
 
