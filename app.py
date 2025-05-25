@@ -73,7 +73,7 @@ if st.button("📊 Gerar com base nos últimos 300 concursos (Aleatório)"):
 
 
 st.subheader("🔢 Gerar Cartões Probabilísticos (com base nos 300 concursos)")
-qtde_prob = st.slider("📌 Quantidade de cartões probabilísticos:", 1, 100, 20, key="slider_probabilistico")
+qtde_prob = st.slider("📌 Quantidade de cartões probabilísticos:", 1, 1500, 520, key="slider_probabilistico")
 
 if st.button("🎲 Gerar Cartões Probabilísticos"):
     if "concursos_300" not in st.session_state:
@@ -90,20 +90,28 @@ if st.button("🎲 Gerar Cartões Probabilísticos"):
         st.write(f"Probabilístico {i:02d}: `{c}`")
     # 📊 Conferência de desempenho
 st.subheader("📊 Conferência com últimos 25 concursos")
-
 tipo_cartao = st.radio("Escolha quais cartões deseja conferir:",
-                       options=["Otimizados (25 concursos)", "Aleatórios (300 concursos)"],
+                       options=[
+                           "Otimizados (25 concursos)",
+                           "Aleatórios (300 concursos)",
+                           "Probabilísticos (300 concursos)"
+                       ],
                        horizontal=True)
 
 if tipo_cartao == "Otimizados (25 concursos)" and "cartoes_gerados" in st.session_state:
     cartoes_para_conferir = st.session_state.cartoes_gerados
 elif tipo_cartao == "Aleatórios (300 concursos)" and "cartoes_gerados_aleatorios" in st.session_state:
     cartoes_para_conferir = st.session_state.cartoes_gerados_aleatorios
+elif tipo_cartao == "Probabilísticos (300 concursos)" and "cartoes_probabilisticos" in st.session_state:
+    cartoes_para_conferir = st.session_state.cartoes_probabilisticos
 else:
     cartoes_para_conferir = []
 
+
+
 if cartoes_para_conferir:
     min_concursos = st.slider("Mínimo de concursos com 13+ pontos para destacar cartão:", 1, 10, 3)
+    
 
     if st.button("✅ Conferir Desempenho dos Cartões"):
         with st.spinner("🔎 Analisando desempenho..."):
