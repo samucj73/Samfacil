@@ -50,7 +50,7 @@ if st.button("🚀 Gerar Cartões Otimizados"):
 # 📊 Conferência de desempenho
 if "cartoes_gerados" in st.session_state:
     st.subheader("📊 Conferência com últimos 25 concursos")
-    min_concursos = st.slider("Mínimo de concursos com 12+ pontos para destacar cartão:", 1, 10, 3)
+    min_concursos = st.slider("Mínimo de concursos com 13+ pontos para destacar cartão:", 1, 10, 3)
 
     if st.button("✅ Conferir Desempenho dos Cartões"):
         with st.spinner("🔎 Analisando desempenho..."):
