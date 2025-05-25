@@ -15,9 +15,9 @@ def calcular_probabilidades(concursos):
     probabilidades = {d: contagem.get(d, 0) / total for d in DEZENAS}
     return probabilidades
 
-def gerar_cartoes_probabilisticos(probabilidades):
+def gerar_cartao_probabilistico(probabilidades):
     """
-    Gera um cartão de 15 dezenas com base nas probabilidades calculadas.
+    Gera um único cartão de 15 dezenas com base nas probabilidades calculadas.
     """
     dezenas_escolhidas = set()
     while len(dezenas_escolhidas) < 15:
