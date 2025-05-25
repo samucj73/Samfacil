@@ -62,7 +62,7 @@ if st.button("🎲 Gerar Aleatórios Base 300"):
     st.divider()
 
 # 🎯 Cartões Probabilísticos
-qtde_prob = st.slider("📌 Quantidade de cartões probabilísticos:", 1, 100, 20)
+qtde_prob = st.slider("📌 Quantidade de cartões probabilísticos:", 1, 10000, 5000)
 if st.button("📈 Gerar Cartões Probabilísticos"):
     with st.spinner("🎯 Gerando com base em frequência..."):
         cartoes_prob = gerar_cartoes_mais_possiveis(concursos_300, quantidade=qtde_prob)
