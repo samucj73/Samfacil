@@ -21,12 +21,12 @@ def conferir_cartoes(cartoes, ultimos_resultados, filtrar_excelentes=True, min_a
     faixa_acertos = Counter()
     desempenho = defaultdict(int)
     bons_cartoes = []
-    destaques = defaultdict(list)  # {acertos: [(cartao, concurso)]}
+    destaques = defaultdict(list)  # {acertos: [(cartao, concurso, indice)]}
 
     for concurso, data, dezenas_sorteadas in ultimos_resultados:
         acertos_por_cartao = []
         sorteio = set(dezenas_sorteadas)
-        for cartao in cartoes:
+        for idx, cartao in enumerate(cartoes):
             acertos = len(set(cartao) & sorteio)
             acertos_por_cartao.append(acertos)
             if 11 <= acertos <= 15:
@@ -34,7 +34,7 @@ def conferir_cartoes(cartoes, ultimos_resultados, filtrar_excelentes=True, min_a
             if acertos >= 12:
                 desempenho[tuple(cartao)] += 1
             if acertos in (13, 14, 15):
-                destaques[acertos].append((list(cartao), concurso))
+                destaques[acertos].append((list(cartao), concurso, idx))
         resultados.append((concurso, acertos_por_cartao))
 
     if filtrar_excelentes:
@@ -71,7 +71,10 @@ if __name__ == "__main__":
     for pontos in [13, 14, 15]:
         if destaques[pontos]:
             print(f"\n▶ Cartões com {pontos} pontos:")
-            for cartao, concurso in destaques[pontos]:
-                print(f"Concurso {concurso}: {cartao}")
+            for cartao, concurso, idx in destaques[pontos]:
+                if pontos == 14:
+                    print(f"🟡 Concurso {concurso} | Cartão #{idx + 1}: {cartao}")
+                else:
+                    print(f"Concurso {concurso}: {cartao}")
         else:
             print(f"\n▶ Nenhum cartão fez {pontos} pontos.")
