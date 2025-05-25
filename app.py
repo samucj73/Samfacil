@@ -2,6 +2,7 @@ import streamlit as st
 from datetime import datetime
 from api_lotofacil import capturar_ultimos_resultados
 from gerador_otimizado import gerar_cartoes_otimizados
+from gerador_probabilistico import gerar_cartao_probabilistico
 
 from conferencia import conferir_cartoes  # <- Módulo de conferência
 
@@ -69,7 +70,7 @@ if st.button("📊 Gerar com base nos últimos 300 concursos (Aleatório)"):
 # 🎯 NOVA SEÇÃO - Geração de Cartões Probabilístico
 # ----------------------------------------------
 
-from gerador_probabilistico import gerar_cartao_probabilistico
+
 
 st.subheader("🔢 Gerar Cartões Probabilísticos (com base nos 300 concursos)")
 qtde_prob = st.slider("📌 Quantidade de cartões probabilísticos:", 1, 100, 20, key="slider_probabilistico")
