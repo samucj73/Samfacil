@@ -89,3 +89,28 @@ def gerar_cartoes_otimizados(concursos_25, quantidade=10):
             falhas += 1
 
     return cartoes
+
+def gerar_cartoes_aleatorios_base_300(concursos_300, quantidade=10):
+    mais_frequentes, menos_frequentes = analisar_dezenas_estrategicas(concursos_300)
+    cartoes = []
+    set_cartoes = set()
+    tentativas = 0
+    max_tentativas = 10000
+
+    while len(cartoes) < quantidade and tentativas < max_tentativas:
+        base = random.sample(list(mais_frequentes), 6)
+        restante = list(set(DEZENAS) - set(base) - menos_frequentes)
+        if len(restante) < 9:
+            tentativas += 1
+            continue
+        complemento = random.sample(restante, 9)
+        cartao = sorted(base + complemento)
+        cartao_tuple = tuple(cartao)
+
+        if cartao_tuple not in set_cartoes:
+            cartoes.append(cartao)
+            set_cartoes.add(cartao_tuple)
+
+        tentativas += 1
+
+    return cartoes
