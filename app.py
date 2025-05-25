@@ -102,7 +102,7 @@ if cartoes_para_conferir:
         else:
             st.info("Nenhum cartão teve bom desempenho com esse critério.")
 else:
-    st.info("Gere os cartões primeiro para poder conferi-los.")p
+    st.info("Gere os cartões primeiro para poder conferi-los.")
     
     
 
