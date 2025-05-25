@@ -2,7 +2,7 @@ import streamlit as st
 from datetime import datetime
 from api_lotofacil import capturar_ultimos_resultados
 from gerador_otimizado import gerar_cartoes_otimizados
-from conferencia import conferir_cartoes  # <- Novo módulo
+from conferencia import conferir_cartoes  # <- Módulo de conferência
 
 st.set_page_config(page_title="LotoFácil Inteligente", layout="centered")
 st.title("🔮 LotoFácil Inteligente")
@@ -72,6 +72,16 @@ if "cartoes_gerados" in st.session_state:
                 st.write(f"{i:02d}) `{sorted(c)}`")
         else:
             st.info("Nenhum cartão teve bom desempenho com esse critério.")
+
+        # 🎯 Destaque especial: cartões com 14 pontos
+        if destaques[14]:
+            st.write("---")
+            st.subheader("🌟 Destaques: Cartões com 14 pontos")
+            for cartao, concurso, idx in destaques[14]:
+                st.markdown(f"✅ Cartão #{idx + 1} acertou 14 pontos no concurso **{concurso}**:")
+                st.code(sorted(cartao), language="python")
+        else:
+            st.info("Nenhum cartão acertou 14 pontos nos últimos concursos.")
 
 # 📅 Expansor com os 300 últimos concursos
 with st.expander("📅 Ver os 300 últimos concursos"):
