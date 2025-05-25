@@ -89,7 +89,9 @@ if st.button("🎲 Gerar Cartões Probabilísticos"):
     for i, c in enumerate(cartoes_prob, 1):
         st.write(f"Probabilístico {i:02d}: `{c}`")
     # 📊 Conferência de desempenho
+# 📊 Conferência de desempenho
 st.subheader("📊 Conferência com últimos 25 concursos")
+
 tipo_cartao = st.radio("Escolha quais cartões deseja conferir:",
                        options=[
                            "Otimizados (25 concursos)",
@@ -98,6 +100,7 @@ tipo_cartao = st.radio("Escolha quais cartões deseja conferir:",
                        ],
                        horizontal=True)
 
+# Seleciona os cartões conforme tipo escolhido
 if tipo_cartao == "Otimizados (25 concursos)" and "cartoes_gerados" in st.session_state:
     cartoes_para_conferir = st.session_state.cartoes_gerados
 elif tipo_cartao == "Aleatórios (300 concursos)" and "cartoes_gerados_aleatorios" in st.session_state:
@@ -107,11 +110,8 @@ elif tipo_cartao == "Probabilísticos (300 concursos)" and "cartoes_probabilisti
 else:
     cartoes_para_conferir = []
 
-
-
 if cartoes_para_conferir:
     min_concursos = st.slider("Mínimo de concursos com 13+ pontos para destacar cartão:", 1, 10, 3)
-    
 
     if st.button("✅ Conferir Desempenho dos Cartões"):
         with st.spinner("🔎 Analisando desempenho..."):
@@ -122,39 +122,48 @@ if cartoes_para_conferir:
                 min_acertos=min_concursos
             )
 
-st.write("### 🎯 Faixas de Acertos (total em todos concursos):")
-for pontos in range(11, 16):
-    st.write(f"✅ {pontos} pontos: `{faixa_acertos.get(pontos, 0)}`")
+        st.write("### 🎯 Faixas de Acertos (total em todos concursos):")
+        for pontos in range(11, 16):
+            st.write(f"✅ {pontos} pontos: `{faixa_acertos.get(pontos, 0)}`")
 
-st.markdown("---")
-st.write("### 🏆 Detalhamento dos cartões com 14 ou 15 pontos:")
+        st.markdown("---")
+        st.write(f"🏅 Cartões que acertaram **12+ pontos em pelo menos {min_concursos} concursos**:")
+        if bons_cartoes:
+            for i, c in enumerate(bons_cartoes, 1):
+                st.write(f"{i:02d}) `{sorted(c)}`")
+        else:
+            st.info("Nenhum cartão teve bom desempenho com esse critério.")
 
-detalhes = []
+        st.markdown("---")
+        st.subheader("🏆 Detalhamento: Cartões com 14 ou 15 pontos")
 
-for idx_cartao, cartao in enumerate(cartoes_para_conferir):
-    for idx_concurso, (_, num_concurso, dezenas_sorteadas) in enumerate(concursos):
-        acertos = len(set(cartao) & set(dezenas_sorteadas))
-        if acertos in [14, 15]:
-            detalhes.append({
-                "cartao_idx": idx_cartao + 1,
-                "cartao": sorted(cartao),
-                "concurso": num_concurso,
-                "acertos": acertos,
-                "sorteadas": sorted(dezenas_sorteadas)
-            })
+        detalhes = []
+        for idx, cartao in enumerate(cartoes_para_conferir):
+            for concurso in concursos:
+                num, _, dezenas_sorteadas = concurso
+                acertos = len(set(cartao) & set(dezenas_sorteadas))
+                if acertos in [14, 15]:
+                    detalhes.append({
+                        "cartao_idx": idx + 1,
+                        "cartao": sorted(cartao),
+                        "concurso": num,
+                        "acertos": acertos,
+                        "sorteadas": sorted(dezenas_sorteadas)
+                    })
 
-if detalhes:
-    for item in detalhes:
-        st.markdown(f"""
-        🔢 Cartão **{item['cartao_idx']}** acertou **{item['acertos']} pontos** no **concurso {item['concurso']}**  
-        - 🎫 Cartão: `{item['cartao']}`  
-        - 🎯 Dezenas sorteadas: `{item['sorteadas']}`  
-        """)
+        if detalhes:
+            for item in detalhes:
+                st.markdown(f"""
+                🎯 **{item['acertos']} pontos** no concurso **{item['concurso']}**  
+                - 🪪 Cartão **{item['cartao_idx']}**: `{item['cartao']}`  
+                - 🎱 Sorteio: `{item['sorteadas']}`
+                """)
+        else:
+            st.info("Nenhum cartão fez 14 ou 15 pontos nos últimos 25 concursos.")
 else:
-    st.info("Nenhum cartão fez 14 ou 15 pontos nos últimos 25 concursos.")
+    st.info("Gere os cartões primeiro para poder conferi-los.")
 
-        
-    
+
     
 
 
