@@ -82,7 +82,7 @@ if st.button("🎲 Gerar Cartões Probabilísticos"):
 
     concursos_base = st.session_state.concursos_300
     with st.spinner("🔍 Gerando cartões com base na frequência das dezenas..."):
-        cartoes_prob = gerar_cartoes_probabilisticos(concursos_base, qtde_prob)
+        cartoes_prob = gerar_cartoes_probabilisticos(concursos_300, qtde_prob)
         st.session_state.cartoes_probabilisticos = cartoes_prob
 
     st.success(f"✅ {len(cartoes_prob)} cartões gerados com base em frequência!")
