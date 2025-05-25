@@ -64,8 +64,6 @@ if st.button("📊 Gerar com base nos últimos 300 concursos (Aleatório)"):
         st.write(f"[Aleatório 300] Cartão {i}: `{c}`")
 
     st.divider()
-
-# 📊 Conferência de desempenho
     # 📊 Conferência de desempenho
 st.subheader("📊 Conferência com últimos 25 concursos")
 
@@ -104,19 +102,10 @@ if cartoes_para_conferir:
         else:
             st.info("Nenhum cartão teve bom desempenho com esse critério.")
 else:
-    st.info("Gere os cartões primeiro para poder conferi-los.")
+    st.info("Gere os cartões primeiro para poder conferi-los.")p
+    
     
 
-
-        # 🎯 Destaque especial: cartões com 14 pontos
-        if destaques[14]:
-            st.write("---")
-            st.subheader("🌟 Destaques: Cartões com 14 pontos")
-            for cartao, concurso, idx in destaques[14]:
-                st.markdown(f"✅ Cartão #{idx + 1} acertou 14 pontos no concurso **{concurso}**:")
-                st.code(sorted(cartao), language="python")
-        else:
-            st.info("Nenhum cartão acertou 14 pontos nos últimos concursos.")
 
 # 📅 Expansor com os 300 últimos concursos
 with st.expander("📅 Ver os 300 últimos concursos"):
