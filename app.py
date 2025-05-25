@@ -73,7 +73,7 @@ if st.button("📊 Gerar com base nos últimos 300 concursos (Aleatório)"):
 
 
 st.subheader("🔢 Gerar Cartões Probabilísticos (com base nos 300 concursos)")
-qtde_prob = st.slider("📌 Quantidade de cartões probabilísticos:", 1, 1500, 520, key="slider_probabilistico")
+qtde_prob = st.slider("📌 Quantidade de cartões probabilísticos:", 1, 15000, 520, key="slider_probabilistico")
 
 if st.button("🎲 Gerar Cartões Probabilísticos"):
     if "concursos_300" not in st.session_state:
