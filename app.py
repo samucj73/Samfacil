@@ -47,6 +47,24 @@ if st.button("🚀 Gerar Cartões Otimizados"):
 
     st.divider()
 
+# 🎲 Geração de cartões aleatórios com base nos 300 concursos
+st.markdown("### 🎲 Geração com lógica mais aleatória (300 concursos)")
+
+if st.button("📊 Gerar com base nos últimos 300 concursos (Aleatório)"):
+    from gerador_otimizado import gerar_cartoes_aleatorios_base_300
+
+    with st.spinner("🎲 Gerando cartões com lógica menos restrita..."):
+        cartoes_aleatorios = gerar_cartoes_aleatorios_base_300(
+            st.session_state.concursos_300, qtde_cartoes
+        )
+        st.session_state.cartoes_gerados_aleatorios = cartoes_aleatorios
+
+    st.success(f"✅ {len(cartoes_aleatorios)} cartões gerados com lógica aleatória baseada nos 300 concursos!")
+    for i, c in enumerate(cartoes_aleatorios, 1):
+        st.write(f"[Aleatório 300] Cartão {i}: `{c}`")
+
+    st.divider()
+
 # 📊 Conferência de desempenho
 if "cartoes_gerados" in st.session_state:
     st.subheader("📊 Conferência com últimos 25 concursos")
