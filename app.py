@@ -69,7 +69,7 @@ if st.button("📊 Gerar com base nos últimos 300 concursos (Aleatório)"):
 # 🎯 NOVA SEÇÃO - Geração de Cartões Probabilístico
 # ----------------------------------------------
 
-from gerador_probabilistico import gerar_cartoes_probabilisticos
+from gerador_probabilistico import gerar_cartao_probabilistico
 
 st.subheader("🔢 Gerar Cartões Probabilísticos (com base nos 300 concursos)")
 qtde_prob = st.slider("📌 Quantidade de cartões probabilísticos:", 1, 100, 20, key="slider_probabilistico")
