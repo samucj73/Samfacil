@@ -2,6 +2,7 @@ import streamlit as st
 from datetime import datetime
 from api_lotofacil import capturar_ultimos_resultados
 from gerador_otimizado import gerar_cartoes_otimizados
+from gerador_probabilistico import gerar_cartoes_probabilisticos
 from conferencia import conferir_cartoes  # <- Módulo de conferência
 
 st.set_page_config(page_title="LotoFácil Inteligente", layout="centered")
@@ -64,6 +65,27 @@ if st.button("📊 Gerar com base nos últimos 300 concursos (Aleatório)"):
         st.write(f"[Aleatório 300] Cartão {i}: `{c}`")
 
     st.divider()
+    # ----------------------------------------------
+# 🎯 NOVA SEÇÃO - Geração de Cartões Probabilísticos
+# ----------------------------------------------
+
+
+st.subheader("🔢 Gerar Cartões Probabilísticos (com base nos 300 concursos)")
+qtde_prob = st.slider("📌 Quantidade de cartões probabilísticos:", 1, 100, 20, key="slider_probabilistico")
+
+if st.button("🎲 Gerar Cartões Probabilísticos"):
+    if "concursos_300" not in st.session_state:
+        with st.spinner("🔄 Buscando os 300 últimos concursos..."):
+            st.session_state.concursos_300 = capturar_ultimos_resultados(qtd=300)
+
+    concursos_base = st.session_state.concursos_300
+    with st.spinner("🔍 Gerando cartões com base na frequência das dezenas..."):
+        cartoes_prob = gerar_cartoes_probabilisticos(concursos_base, qtde_prob)
+        st.session_state.cartoes_probabilisticos = cartoes_prob
+
+    st.success(f"✅ {len(cartoes_prob)} cartões gerados com base em frequência!")
+    for i, c in enumerate(cartoes_prob, 1):
+        st.write(f"Probabilístico {i:02d}: `{c}`")
     # 📊 Conferência de desempenho
 st.subheader("📊 Conferência com últimos 25 concursos")
 
