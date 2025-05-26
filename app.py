@@ -4,6 +4,7 @@ from api_lotofacil import capturar_ultimos_resultados
 from gerador_otimizado import gerar_cartoes_otimizados
 from gerador_probabilistico import gerar_cartoes_mais_possiveis
 from conferencia import conferir_cartoes
+from gerador_inverso import gerar_cartoes_inversos
 
 st.set_page_config(page_title="LotoFácil Inteligente", layout="centered")
 
@@ -36,7 +37,7 @@ st.markdown(f"<p style='text-align: center;'>**Dezenas sorteadas:** `{sorted(dez
 st.divider()
 
 # 🗂️ Abas principais
-abas = st.tabs(["📈 Otimizados", "🎲 Aleatórios", "📊 Probabilísticos", "✅ Conferência", "📅 Históricos"])
+abas = st.tabs(["📈 Otimizados", "🎲 Aleatórios", "📊 Probabilísticos", "✅ Conferência", "📅 Históricos", "🚫 Inverso"])
 
 # 📈 Geração Otimizada
 with abas[0]:
@@ -178,6 +179,20 @@ with abas[4]:
         numero = item[0]
         dezenas = ", ".join(str(d).zfill(2) for d in sorted(item[2]))
         st.write(f"Concurso {numero}: {dezenas}")
+        with abas[5]:
+    st.markdown("### 🚫 Gerar Cartões Inversos (excluindo 10 menos prováveis)", unsafe_allow_html=True)
+    qtde_inversos = st.slider("📌 Quantidade de cartões inversos:", 1, 1000, 200)
+
+    if st.button("🚫 Gerar Cartões Inversos"):
+        with st.spinner("🔍 Analisando os 300 últimos concursos..."):
+            cartoes_inversos, excluidas = gerar_cartoes_inversos(concursos_300, quantidade=qtde_inversos)
+
+        st.success(f"✅ {len(cartoes_inversos)} cartões gerados (sem repetir) excluindo as 10 menos frequentes.")
+        st.markdown(f"**🔻 Dezenas excluídas:** `{sorted(excluidas)}`")
+        st.markdown("---")
+
+        for i, c in enumerate(cartoes_inversos, 1):
+            st.write(f"Cartão Inverso {i:02d}: `{sorted(c)}`")
 
 # 📌 Rodapé fixo
 st.markdown("""
