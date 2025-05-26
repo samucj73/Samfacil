@@ -183,6 +183,6 @@ with abas[4]:
 st.markdown("""
 <hr style='border: 1px solid #ccc;'/>
 <div style='text-align: center; font-size: 0.9em; color: #666;'>
-    © 2025 LotoFácil Inteligente — Desenvolvido com ❤️ por SeuNome
+    © 2025 LotoFácil Inteligente — Desenvolvido por SAMUCJ TECHNOLOGY
 </div>
 """, unsafe_allow_html=True)
