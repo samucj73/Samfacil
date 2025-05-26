@@ -10,28 +10,28 @@ st.set_page_config(page_title="LotoFácil Inteligente", layout="centered")
 
 st.markdown("<h1 style='text-align: center;'>🔮 LotoFácil Inteligente</h1>", unsafe_allow_html=True)
 
-# 🔄 Atualização de concursos
-if st.button("🔁 Atualizar concursos"):
-    st.session_state.pop("concursos_25", None)
-    st.session_state.pop("concursos_300", None)
+# 🔧 Configuração global na barra lateral
+st.sidebar.markdown("### ⚙️ Configuração Global")
+qtd_concursos_global = st.sidebar.slider(
+    "📊 Quantidade de concursos a considerar (para geração e análise):",
+    min_value=50, max_value=2500, value=300, step=50
+)
 
-if "concursos_25" not in st.session_state:
-    with st.spinner("🔄 Buscando últimos 25 resultados da Lotofácil..."):
-        concursos = capturar_ultimos_resultados(qtd=2500)
-        if not concursos:
+# Botão para recarregar os concursos
+if st.sidebar.button("🔄 Recarregar Concursos"):
+    st.session_state.pop("concursos_dinamico", None)
+
+# Carregamento dos concursos conforme a quantidade global escolhida
+if "concursos_dinamico" not in st.session_state:
+    with st.spinner(f"🔍 Carregando os últimos {qtd_concursos_global} concursos..."):
+        concursos_dinamico = capturar_ultimos_resultados(qtd=qtd_concursos_global)
+        if not concursos_dinamico:
             st.error("❌ Não foi possível obter os resultados.")
             st.stop()
-        st.session_state.concursos_25 = concursos
+        st.session_state.concursos_dinamico = concursos_dinamico
 
-if "concursos_300" not in st.session_state:
-    with st.spinner("🔄 Buscando os 300 últimos concursos..."):
-        concursos_300 = capturar_ultimos_resultados(qtd=300)
-        st.session_state.concursos_300 = concursos_300
-
-concursos = st.session_state.concursos_25
-concursos_300 = st.session_state.concursos_300
-
-numero, data, dezenas = concursos[0]
+concursos_dinamico = st.session_state.concursos_dinamico
+numero, data, dezenas = concursos_dinamico[0]
 st.markdown(f"<h4 style='text-align: center;'>📅 Último concurso: {numero} ({data})</h4>", unsafe_allow_html=True)
 st.markdown(f"<p style='text-align: center;'>**Dezenas sorteadas:** `{sorted(dezenas)}`</p>", unsafe_allow_html=True)
 st.divider()
@@ -46,7 +46,7 @@ with abas[0]:
 
     if st.button("🚀 Gerar Cartões Otimizados"):
         with st.spinner("🔍 Gerando cartões com filtros avançados..."):
-            cartoes = gerar_cartoes_otimizados(concursos, qtde_cartoes)
+            cartoes = gerar_cartoes_otimizados(concursos_dinamico, qtde_cartoes)
             st.session_state.cartoes_gerados = cartoes
 
         st.success(f"✅ {len(cartoes)} cartões gerados!")
@@ -54,15 +54,15 @@ with abas[0]:
             st.write(f"Cartão {i}: `{c}`")
         st.divider()
 
-# 🎲 Aleatórios base 300 concursos
+# 🎲 Aleatórios base
 with abas[1]:
-    st.markdown("### 🎲 Geração Aleatória com Base nos 300 Últimos Concursos", unsafe_allow_html=True)
+    st.markdown("### 🎲 Geração Aleatória com Base nos Últimos Concursos", unsafe_allow_html=True)
 
-    if st.button("🎲 Gerar Aleatórios Base 300"):
+    if st.button("🎲 Gerar Aleatórios Base"):
         from gerador_otimizado import gerar_cartoes_aleatorios_base_300
 
         with st.spinner("🎲 Gerando cartões aleatórios..."):
-            cartoes_aleatorios = gerar_cartoes_aleatorios_base_300(concursos_300, qtde_cartoes)
+            cartoes_aleatorios = gerar_cartoes_aleatorios_base_300(concursos_dinamico, qtde_cartoes)
             st.session_state.cartoes_gerados_aleatorios = cartoes_aleatorios
 
         st.success(f"✅ {len(cartoes_aleatorios)} cartões gerados!")
@@ -77,7 +77,7 @@ with abas[2]:
 
     if st.button("📈 Gerar Cartões Probabilísticos"):
         with st.spinner("🎯 Gerando com base em frequência..."):
-            cartoes_prob = gerar_cartoes_mais_possiveis(concursos_300, quantidade=qtde_prob)
+            cartoes_prob = gerar_cartoes_mais_possiveis(concursos_dinamico, quantidade=qtde_prob)
             st.session_state.cartoes_probabilisticos = cartoes_prob
 
         st.success(f"✅ {len(cartoes_prob)} cartões gerados com base em frequência!")
@@ -86,9 +86,8 @@ with abas[2]:
         st.divider()
 
 # ✅ Conferência
-# 📊 Conferência
 with abas[3]:
-    st.subheader("📊 Conferência com últimos 25 concursos")
+    st.subheader("📊 Conferência com últimos concursos")
     tipo_cartao = st.radio("Escolha quais cartões deseja conferir:",
                            ["Otimizados", "Aleatórios (300)", "Probabilísticos", "Inversos"],
                            horizontal=True)
@@ -111,7 +110,7 @@ with abas[3]:
             with st.spinner("🔍 Verificando desempenho..."):
                 resultados, faixa_acertos, desempenho, bons_cartoes, destaques = conferir_cartoes(
                     cartoes_para_conferir,
-                    concursos,
+                    concursos_dinamico,
                     filtrar_excelentes=True,
                     min_acertos=min_concursos
                 )
@@ -134,7 +133,7 @@ with abas[3]:
             historico_anterior = {}
 
             for idx, cartao in enumerate(cartoes_para_conferir):
-                for pos, concurso in enumerate(concursos):
+                for pos, concurso in enumerate(concursos_dinamico):
                     num, _, dezenas_sorteadas = concurso
                     acertos = len(set(cartao) & set(dezenas_sorteadas))
 
@@ -148,7 +147,7 @@ with abas[3]:
                         })
 
                         historico = []
-                        for prev in concursos[pos+1:]:
+                        for prev in concursos_dinamico[pos+1:]:
                             num_ant, _, dezenas_ant = prev
                             acertos_ant = len(set(cartao) & set(dezenas_ant))
                             if acertos_ant in [11, 12, 13]:
@@ -177,23 +176,22 @@ with abas[3]:
 
 # 📅 Histórico
 with abas[4]:
-    st.markdown("### 📅 Ver os 300 últimos concursos", unsafe_allow_html=True)
-    for item in concursos_300:
+    st.markdown("### 📅 Ver os últimos concursos", unsafe_allow_html=True)
+    for item in concursos_dinamico:
         numero = item[0]
         dezenas = ", ".join(str(d).zfill(2) for d in sorted(item[2]))
         st.write(f"Concurso {numero}: {dezenas}")
 
+# 🚫 Inverso
 with abas[5]:
     st.markdown("### 🚫 Gerar Cartões Inversos (excluindo dezenas menos prováveis)")
-
-    # Escolha de parâmetros
     qtde_inversos = st.slider("📌 Quantidade de cartões inversos:", 1, 1000, 200)
     qtd_excluir = st.slider("❌ Quantas dezenas deseja excluir (menos frequentes):", 5, 10, 10)
 
     if st.button("🚫 Gerar Cartões Inversos"):
-        with st.spinner("🔍 Analisando os 300 últimos concursos..."):
+        with st.spinner("🔍 Analisando concursos..."):
             cartoes_inversos, excluidas = gerar_cartoes_inversos(
-                concursos_300,
+                concursos_dinamico,
                 quantidade=qtde_inversos,
                 excluir_qtd=qtd_excluir
             )
@@ -203,17 +201,15 @@ with abas[5]:
         else:
             st.success(f"✅ {len(cartoes_inversos)} cartões gerados excluindo as {qtd_excluir} menos frequentes.")
             st.markdown(f"**🔻 Dezenas excluídas:** `{sorted(excluidas)}`")
+            st.session_state.cartoes_inversos = cartoes_inversos
             st.markdown("---")
-
             for i, c in enumerate(cartoes_inversos, 1):
                 st.write(f"Cartão Inverso {i:02d}: `{sorted(c)}`")
-
 
 # 📌 Rodapé fixo
 st.markdown("""
 <hr style='border: 1px solid #ccc;'/>
 <div style='text-align: center; font-size: 0.9em; color: #666;'>
-© 2025 LotoFácil Inteligente                                                         
-Desenvolvido por SAMUCJ TECHNOLOGY
+© 2025 LotoFácil Inteligente — Desenvolvido por SAMUCJ TECHNOLOGY
 </div>
 """, unsafe_allow_html=True)
