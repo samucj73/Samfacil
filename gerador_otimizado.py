@@ -63,8 +63,8 @@ def gerar_cartao_estrategico(mais_freq, menos_freq, tentativas=50000):
             soma_ok(cartao) and
             pares_impares_ok(cartao) and
             tem_sequencia(cartao, tamanho=3)
-             quadrantes_ok(cartao) and
-             primos_ok(cartao)
+            quadrantes_ok(cartao) and
+            primos_ok(cartao)
         ):
             return sorted(cartao)
     return None
