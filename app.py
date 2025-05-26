@@ -179,8 +179,10 @@ with abas[4]:
         numero = item[0]
         dezenas = ", ".join(str(d).zfill(2) for d in sorted(item[2]))
         st.write(f"Concurso {numero}: {dezenas}")
-        with abas[5]:
+
+with abas[5]:
     st.markdown("### 🚫 Gerar Cartões Inversos (excluindo 10 menos prováveis)", unsafe_allow_html=True)
+
     qtde_inversos = st.slider("📌 Quantidade de cartões inversos:", 1, 1000, 200)
 
     if st.button("🚫 Gerar Cartões Inversos"):
@@ -193,6 +195,7 @@ with abas[4]:
 
         for i, c in enumerate(cartoes_inversos, 1):
             st.write(f"Cartão Inverso {i:02d}: `{sorted(c)}`")
+        
 
 # 📌 Rodapé fixo
 st.markdown("""
