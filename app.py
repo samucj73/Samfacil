@@ -14,7 +14,7 @@ st.markdown("<h1 style='text-align: center;'>🔮 LotoFácil Inteligente</h1>", 
 st.sidebar.markdown("### ⚙️ Configuração Global")
 qtd_concursos_global = st.sidebar.slider(
     "📊 Quantidade de concursos a considerar (para geração e análise):",
-    min_value=50, max_value=2500, value=300, step=50
+    min_value=15, max_value=2500, value=10, step=15
 )
 
 # Botão para recarregar os concursos
@@ -210,6 +210,6 @@ with abas[5]:
 st.markdown("""
 <hr style='border: 1px solid #ccc;'/>
 <div style='text-align: center; font-size: 0.9em; color: #666;'>
-© 2025 LotoFácil Inteligente — Desenvolvido por SAMUCJ TECHNOLOGY
+© 2025  Desenvolvido por SAMUCJ TECHNOLOGY
 </div>
 """, unsafe_allow_html=True)
