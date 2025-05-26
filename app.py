@@ -181,21 +181,30 @@ with abas[4]:
         st.write(f"Concurso {numero}: {dezenas}")
 
 with abas[5]:
-    st.markdown("### 🚫 Gerar Cartões Inversos (excluindo 10 menos prováveis)", unsafe_allow_html=True)
+    st.markdown("### 🚫 Gerar Cartões Inversos (excluindo dezenas menos prováveis)")
 
+    # Escolha de parâmetros
     qtde_inversos = st.slider("📌 Quantidade de cartões inversos:", 1, 1000, 200)
+    qtd_excluir = st.slider("❌ Quantas dezenas deseja excluir (menos frequentes):", 5, 10, 10)
 
     if st.button("🚫 Gerar Cartões Inversos"):
         with st.spinner("🔍 Analisando os 300 últimos concursos..."):
-            cartoes_inversos, excluidas = gerar_cartoes_inversos(concursos_300, quantidade=qtde_inversos)
+            cartoes_inversos, excluidas = gerar_cartoes_inversos(
+                concursos_300,
+                quantidade=qtde_inversos,
+                excluir_qtd=qtd_excluir
+            )
 
-        st.success(f"✅ {len(cartoes_inversos)} cartões gerados (sem repetir) excluindo as 10 menos frequentes.")
-        st.markdown(f"**🔻 Dezenas excluídas:** `{sorted(excluidas)}`")
-        st.markdown("---")
+        if not cartoes_inversos:
+            st.error("⚠️ Não foi possível gerar cartões com os critérios definidos.")
+        else:
+            st.success(f"✅ {len(cartoes_inversos)} cartões gerados excluindo as {qtd_excluir} menos frequentes.")
+            st.markdown(f"**🔻 Dezenas excluídas:** `{sorted(excluidas)}`")
+            st.markdown("---")
 
-        for i, c in enumerate(cartoes_inversos, 1):
-            st.write(f"Cartão Inverso {i:02d}: `{sorted(c)}`")
-        
+            for i, c in enumerate(cartoes_inversos, 1):
+                st.write(f"Cartão Inverso {i:02d}: `{sorted(c)}`")
+
 
 # 📌 Rodapé fixo
 st.markdown("""
