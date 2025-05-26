@@ -86,20 +86,23 @@ with abas[2]:
         st.divider()
 
 # ✅ Conferência
+# 📊 Conferência
 with abas[3]:
-    st.markdown("### 📊 Conferência de Cartões", unsafe_allow_html=True)
+    st.subheader("📊 Conferência com últimos 25 concursos")
     tipo_cartao = st.radio("Escolha quais cartões deseja conferir:",
-                           ["Otimizados", "Aleatórios (300)", "Probabilísticos"],
+                           ["Otimizados", "Aleatórios (300)", "Probabilísticos", "Inversos"],
                            horizontal=True)
 
-    if tipo_cartao == "Otimizados" and "cartoes_gerados" in st.session_state:
-        cartoes_para_conferir = st.session_state.cartoes_gerados
-    elif tipo_cartao == "Aleatórios (300)" and "cartoes_gerados_aleatorios" in st.session_state:
-        cartoes_para_conferir = st.session_state.cartoes_gerados_aleatorios
-    elif tipo_cartao == "Probabilísticos" and "cartoes_probabilisticos" in st.session_state:
-        cartoes_para_conferir = st.session_state.cartoes_probabilisticos
-    else:
-        cartoes_para_conferir = []
+    cartoes_para_conferir = []
+
+    if tipo_cartao == "Otimizados":
+        cartoes_para_conferir = st.session_state.get("cartoes_gerados", [])
+    elif tipo_cartao == "Aleatórios (300)":
+        cartoes_para_conferir = st.session_state.get("cartoes_gerados_aleatorios", [])
+    elif tipo_cartao == "Probabilísticos":
+        cartoes_para_conferir = st.session_state.get("cartoes_probabilisticos", [])
+    elif tipo_cartao == "Inversos":
+        cartoes_para_conferir = st.session_state.get("cartoes_inversos", [])
 
     if cartoes_para_conferir:
         min_concursos = st.slider("Mínimo de concursos com 13+ pontos para destacar cartão:", 1, 10, 3)
@@ -113,11 +116,11 @@ with abas[3]:
                     min_acertos=min_concursos
                 )
 
-            st.markdown("#### 📈 Faixas de Acertos", unsafe_allow_html=True)
+            st.subheader("📈 Faixas de Acertos")
             for pontos in range(11, 16):
                 st.write(f"✅ {pontos} pontos: `{faixa_acertos.get(pontos, 0)}`")
 
-            st.markdown(f"#### 🏅 Cartões com pelo menos {min_concursos}x com 13+ pontos:", unsafe_allow_html=True)
+            st.subheader(f"🏅 Cartões com pelo menos {min_concursos}x com 13+ pontos:")
             if bons_cartoes:
                 for i, c in enumerate(bons_cartoes, 1):
                     st.write(f"{i:02d}) `{sorted(c)}`")
@@ -125,7 +128,7 @@ with abas[3]:
                 st.info("Nenhum cartão teve desempenho destacado.")
 
             st.markdown("---")
-            st.markdown("### 🏆 Detalhamento: Cartões com 14 ou 15 pontos + Histórico anterior", unsafe_allow_html=True)
+            st.subheader("🏆 Detalhamento: Cartões com 14 ou 15 pontos + Histórico anterior")
 
             detalhes = []
             historico_anterior = {}
@@ -162,7 +165,7 @@ with abas[3]:
                     chave = (item['cartao_idx'], item['concurso'])
                     historico = historico_anterior.get(chave, [])
                     if historico:
-                        st.markdown(f"🔄 Histórico anterior com 11 a 13 pontos:")
+                        st.markdown("🔄 Histórico anterior com 11 a 13 pontos:")
                         for num, acertos, dezenas in historico:
                             st.write(f"• Concurso {num}: {acertos} pontos — `{dezenas}`")
                     else:
